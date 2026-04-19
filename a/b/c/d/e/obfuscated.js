@@ -1,7 +1,4 @@
 (async function() {
-// ==========================================
-// 1. Target IP Validation  
-// ==========================================
 if (window.location.hostname !== '10.0.0.1') {  
     if (confirm('You must be on http://10.0.0.1/ to use this. Go there now?')) {  
         window.location.href = 'http://10.0.0.1/';  
@@ -9,87 +6,85 @@ if (window.location.hostname !== '10.0.0.1') {
     return;  
 }  
 
-const CODES_URL = 'https://raw.githubusercontent.com/jimsbautistaparadero/Code/refs/heads/main/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y/z/codes.txt';
+const CODES_URL = 'https://cdn.jsdelivr.net/gh/jimsbautistaparadero/Code@main/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y/z/codes.txt';
 
-// 2. Clear previous UI  
 const oldUI = document.getElementById('lpb-ui-root');  
 if (oldUI) oldUI.remove();  
 
-// 3. Create Shadow DOM  
 const root = document.createElement('div');  
 root.id = 'lpb-ui-root';  
 const shadow = root.attachShadow({ mode: 'open' });  
 
-// 4. Professional UI Styles  
 const style = document.createElement('style');  
 style.textContent = `  
-    .overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 999999; font-family: 'Segoe UI', sans-serif; }  
-    .modal { background: #1e1e2e; color: #cdd6f4; width: 320px; border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; border: 1px solid #313244; animation: popIn 0.3s ease-out; }  
-    @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }  
-    h2 { margin: 0 0 12px 0; color: #89b4fa; font-size: 22px; font-weight: 600; }  
-    p { font-size: 14px; margin-bottom: 20px; color: #a6adc8; line-height: 1.5; }  
-    .btn-group { display: flex; gap: 10px; justify-content: center; }  
-    button { border: none; padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.2s; }  
-    .btn-yes { background: #89b4fa; color: #11111b; width: 100%; }  
-    .btn-yes:hover { background: #74c7ec; transform: translateY(-2px); }  
+    .overlay { position: fixed; inset: 0; background: rgba(15, 15, 20, 0.85); backdrop-filter: blur(12px); display: flex; justify-content: center; align-items: center; z-index: 2147483647; font-family: system-ui, -apple-system, sans-serif; }  
+    .modal { background: linear-gradient(145deg, #1e1e2e, #181825); color: #cdd6f4; width: 340px; border-radius: 20px; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05); text-align: center; border: 1px solid #313244; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }  
+    @keyframes slideUp { 0% { transform: translateY(20px) scale(0.95); opacity: 0; } 100% { transform: translateY(0) scale(1); opacity: 1; } }  
+    h2 { margin: 0 0 10px; color: #89b4fa; font-size: 24px; font-weight: 700; letter-spacing: 0.5px; }  
+    p { font-size: 15px; margin-bottom: 24px; color: #bac2de; line-height: 1.6; }  
+    .btn-group { display: flex; gap: 12px; justify-content: center; }  
+    button { border: none; padding: 12px 20px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.25s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.2); width: 100%; outline: none; }  
+    .btn-yes { background: linear-gradient(135deg, #89b4fa, #74c7ec); color: #11111b; }  
+    .btn-yes:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(137, 180, 250, 0.4); filter: brightness(1.1); }  
     .btn-no { background: #45475a; color: #cdd6f4; }  
-    .btn-no:hover { background: #585b70; transform: translateY(-2px); }  
-    .btn-close { background: #f38ba8; color: #11111b; margin-top: 15px; width: 100%; }  
-    .btn-close:hover { background: #eba0ac; transform: translateY(-2px); }  
-    .spinner { width: 40px; height: 40px; border: 4px solid #313244; border-top: 4px solid #89b4fa; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px auto; }  
+    .btn-no:hover { background: #585b70; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(69, 71, 90, 0.4); }  
+    .btn-close { background: linear-gradient(135deg, #f38ba8, #eba0ac); color: #11111b; margin-top: 10px; }  
+    .btn-close:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(243, 139, 168, 0.4); filter: brightness(1.1); }  
+    .spinner { width: 44px; height: 44px; border: 4px solid rgba(137, 180, 250, 0.2); border-top: 4px solid #89b4fa; border-radius: 50%; animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite; margin: 0 auto 20px auto; }  
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }  
-    .hidden { display: none; }  
-    .warning-text { color: #f38ba8; font-size: 12px; margin-top: 10px; font-weight: bold; }
-    input { background: #313244; border: 1px solid #45475a; border-radius: 8px; padding: 10px; color: #cdd6f4; width: 80%; margin-bottom: 15px; text-align: center; font-size: 16px; outline: none; }
-    input:focus { border-color: #89b4fa; }
+    .hidden { display: none !important; }  
+    .warning-text { color: #f38ba8; font-size: 13px; margin-top: 16px; font-weight: 600; background: rgba(243, 139, 168, 0.1); padding: 8px; border-radius: 8px; }
+    input { background: #11111b; border: 2px solid #313244; border-radius: 12px; padding: 14px; color: #cdd6f4; width: calc(100% - 32px); margin-bottom: 20px; text-align: center; font-size: 24px; font-weight: 700; letter-spacing: 4px; outline: none; transition: all 0.3s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
+    input:focus { border-color: #89b4fa; box-shadow: 0 0 0 3px rgba(137, 180, 250, 0.2); }
+    input::placeholder { color: #45475a; letter-spacing: 4px; }
+    strong { color: #cba6f7; }
+    .error-title { color: #f38ba8; }
 `;  
 shadow.appendChild(style);  
 
-// 5. Build UI Layout  
 const overlay = document.createElement('div');  
 overlay.className = 'overlay';  
 overlay.innerHTML = `  
     <div class="modal" id="modal">  
         <div id="content-check">  
             <div class="spinner"></div>  
-            <h2>Checking System...</h2>  
+            <h2>Checking System</h2>  
             <p>Verifying LPB Network...</p>  
         </div>  
 
         <div id="content-auth" class="hidden">  
             <h2>Activation</h2>  
-            <p>Please enter your 6-digit access code to continue.</p>  
-            <input type="text" id="auth-code" maxlength="6" placeholder="000000">  
-            <button class="btn-yes" id="btn-verify">Verify Code</button>  
+            <p>Please enter your 6-digit access code.</p>  
+            <input type="text" id="auth-code" maxlength="6" placeholder="••••••" autocomplete="off">  
+            <button class="btn-yes" id="btn-verify">Verify Access</button>  
         </div>  
           
         <div id="content-prompt" class="hidden">  
             <h2>Requirements</h2>  
-            <p>Only Works for <strong>LPB Piso Wifi</strong>.<br/><br/>Time Must be above <strong>2 min</strong> or must insert <strong>1 coin ₱</strong>.</p>  
+            <p>Strictly for <strong>LPB Piso Wifi</strong>.<br/><br/>Time must be above <strong>2 mins</strong> or insert <strong>₱1 coin</strong>.</p>  
             <div class="btn-group">  
                 <button class="btn-yes" id="btn-yes">I have time</button>  
                 <button class="btn-no" id="btn-no">I need to insert</button>  
             </div>  
-            <p class="warning-text">Auto-reloading in 5 seconds...</p>
+            <p class="warning-text">Auto-reloading in 5s...</p>
         </div>  
 
         <div id="content-error" class="hidden">  
-            <h2 style="color: #f38ba8;">Action Required</h2>  
-            <p id="error-msg">Time Must be above 2 min or must insert 1 coin ₱.</p>  
-            <button class="btn-close" id="btn-close-err">Close</button>  
+            <h2 class="error-title">Action Required</h2>  
+            <p id="error-msg"></p>  
+            <button class="btn-close" id="btn-close-err">Dismiss</button>  
         </div>  
 
         <div id="content-loading" class="hidden">  
             <div class="spinner"></div>  
-            <h2>Processing...</h2>  
-            <p>Applying changes...</p>  
+            <h2>Processing</h2>  
+            <p>Applying network changes...</p>  
         </div>  
     </div>  
 `;  
 shadow.appendChild(overlay);  
 document.body.appendChild(root);  
 
-// View Manager  
 const showView = (id) => {  
     ['content-check', 'content-auth', 'content-prompt', 'content-error', 'content-loading'].forEach(v => {  
         shadow.getElementById(v).classList.add('hidden');  
@@ -97,26 +92,21 @@ const showView = (id) => {
     shadow.getElementById(id).classList.remove('hidden');  
 };  
 
-// Close Button logic  
-const closeUI = () => root.remove();  
-shadow.getElementById('btn-close-err').onclick = closeUI;  
+shadow.getElementById('btn-close-err').onclick = () => root.remove();  
 
-// 6. LPB Environment Check  
 await new Promise(r => setTimeout(r, 800)); 
 const textToSearch = (document.body.innerText + document.title).toLowerCase();  
 const isLPB = textToSearch.includes('lpb') || textToSearch.includes('piso');  
   
 if (!isLPB) {  
-    shadow.getElementById('error-msg').innerText = "Error: Only Works for LPB Piso Wifi.";  
+    shadow.getElementById('error-msg').innerText = "Only works on LPB Piso Wifi networks.";  
     showView('content-error');  
     setTimeout(() => window.location.reload(), 5000); 
     return;  
 }  
 
-// Show Auth View first
 showView('content-auth');  
 
-// 7. Code Verification Logic
 shadow.getElementById('btn-verify').onclick = async () => {
     const inputCode = shadow.getElementById('auth-code').value.trim();
     
@@ -153,10 +143,9 @@ const startInactivityTimer = () => {
     }, 5000);
 };
 
-// 8. Handlers for the Prompt  
 shadow.getElementById('btn-no').onclick = () => {  
     clearTimeout(promptTimeout); 
-    shadow.getElementById('error-msg').innerHTML = "Time Must be above 2 min<br/>or must insert 1 coin ₱.";  
+    shadow.getElementById('error-msg').innerHTML = "Time must be > 2 mins<br/>or insert a ₱1 coin.";  
     showView('content-error');  
 };  
 
@@ -181,11 +170,9 @@ shadow.getElementById('btn-yes').onclick = async () => {
             signal: controller.signal      
         });  
     } catch (err) {  
-        console.error("Network Error or Timeout:", err);
     } finally {
         clearTimeout(fetchTimeoutId);
         window.location.reload();
     }
 };
-
 })();
